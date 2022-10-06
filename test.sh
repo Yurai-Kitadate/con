@@ -13,10 +13,10 @@ assert() {
         exit 1
     fi
 }
-
+assert 7 '2 + 3 - 5 + 7'
 assert 4 '4'
 assert 32 '32'
 assert 3 '1+2'
 assert 1 '3-2'
-assert 7 '2 + 3 - 5 + 7'
+assert 26 '2 + 3*(3 + 15/3)'
 echo OK
