@@ -4,6 +4,6 @@ test: con
 		./test.sh
 
 clean:
-		rm -f tmp* con input*
+		rm -f tmp* main input*
 
 .PHONY: test clean
