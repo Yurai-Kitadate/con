@@ -1,4 +1,4 @@
-con: con.nim
+con: main.nim
 
 test: con
 		./test.sh

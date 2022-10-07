@@ -2,7 +2,7 @@ assert() {
     expected="$1"
     input="$2"
     echo "$input" >input_file
-    nim c -r -w:off --hints:off --opt:size -d:release main.nim <input_file >tmp.s
+    nim c -r -w:off --hints:off --opt:size -d:release --gc:none --stackTrace:on main.nim <input_file >tmp.s
     docker exec -i ubuntu_compiler /bin/bash -c "cd /home/con && cc -o tmp tmp.s && ./tmp"
     actual=$(echo $?)
 
@@ -13,15 +13,12 @@ assert() {
         exit 1
     fi
 }
-assert 1 '1 <= 3'
-assert 0 '1 > 3'
-assert 1 '1 < 3'
-assert 1 '1 == 1'
-assert 1 '1 <= 1'
-assert 3 '- 2 + 3 - 5 + 7'
-assert 4 '4'
-assert 32 '32'
-assert 3 '1+2'
-assert 1 '3-2'
-assert 26 '2 + 3*(3 + 15/3)'
+
+assert 57 'a = 2;for (i = 0;i < 10;i = i + 1){a = a + i;a = a + 1;}return a;'
+assert 4 'a = 0;for (i = 0;i < 10;i = i + 1) if (i < 5) a = a + 1;return 4;'
+assert 47 'b = 2;for (i = 0;i < 10;i = i + 1) b = b + i;return b;'
+assert 52 'a = 2;if(a == 3)return 1;else return 52;'
+assert 52 'a = 2;if(a == 3)return 1;else if (a == 3) return 2;else return 52;'
+assert 8 'a = 3;b = 3;c = 8;return c;a = a + 1;abc = a*b*c;abc;'
+assert 12 'a = 1;b = 2;c = 3;if(a*b*c == 6)a = a + 1;return a*b*c;'
 echo OK
