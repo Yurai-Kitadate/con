@@ -80,8 +80,8 @@ proc program*() =
 
 
 proc fun(): ref Node =
-  if consume_keyword_t(TK_TYPE) == nil:
-    raiseAssert("fun return type not found")
+  if consume_keyword_t(TK_DEFUN) == nil:
+    raiseAssert("defun not found")
   fun_count += 1
   var tok = consume_keyword_t(TK_IDENT)
   if tok == nil:
@@ -92,9 +92,6 @@ proc fun(): ref Node =
   expect("(")
   var i = 0
   while not consume(")"):
-    var t = consume_keyword_t(TK_TYPE)
-    if t == nil:
-      raiseAssert("type not found")
     var tok = consume_keyword_t(TK_IDENT)
     if tok != nil:
       node[].args[i] = def_variable(tok)
@@ -102,6 +99,9 @@ proc fun(): ref Node =
       break
     expect(",")
     i += 1
+  if consume(":"):
+    if consume_keyword_t(TK_TYPE) == nil:
+      raiseAssert("type not found")
   node[].lhs = stmt()
   return node
 
@@ -124,6 +124,9 @@ proc def_variable(tok: ref Token): ref Node =
   lvar_node[].kind = ND_LVAR
   lvar_node[].offset = lvar[].offset
   node[].lhs = lvar_node
+  expect(":")
+  if consume_keyword_t(TK_TYPE) == nil:
+    raiseAssert("type not found")
   if consume("="):
     node[].rhs = expr()
 
@@ -135,7 +138,6 @@ proc val_variable(tok: ref Token): ref Node =
   node[].kind = ND_LVAR
   var lvar = find_lvar(tok)
   if lvar == nil:
-    echo local_variables[1].repr
     raiseAssert("undefined variable")
   node[].offset = lvar[].offset
   return node
@@ -165,7 +167,7 @@ proc expr(): ref Node =
 
 proc stmt(): ref Node =
   var node = Node.new
-  if consume_keyword_t(TK_TYPE) != nil:
+  if consume_keyword_t(TK_DEF) != nil:
     var tok = consume_keyword_t(TK_IDENT)
     node = def_variable(tok) #LVAR
     expect(";")

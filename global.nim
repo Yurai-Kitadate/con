@@ -8,6 +8,8 @@ type TokenKind* = enum
   TK_ELSE
   TK_FOR
   TK_TYPE
+  TK_DEF
+  TK_DEFUN
 
 type Token* = object
   kind*: TokenKind

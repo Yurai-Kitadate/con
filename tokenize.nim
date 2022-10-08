@@ -51,6 +51,16 @@ proc tokenize*(p: string): ref Token =
     if isspace(p[now_reading]):
       now_reading += 1
       continue
+    if startReserved("def", p):
+      cur = new_token(TK_DEF, cur, "def")
+      cur[].len = 3
+      now_reading += 3
+      continue
+    if startReserved("defun", p):
+      cur = new_token(TK_DEFUN, cur, "defun")
+      cur[].len = 5
+      now_reading += 5
+      continue
     if startReserved("int", p):
       cur = new_token(TK_TYPE, cur, "int")
       cur[].len = 3
@@ -89,7 +99,7 @@ proc tokenize*(p: string): ref Token =
       cur = new_token(TK_RESERVED, cur, p[now_reading] & p[now_reading + 1])
       now_reading += 2
       continue
-    if isIn("+-*/()<>;={},", p[now_reading]):
+    if isIn("+-*/()<>;={},:", p[now_reading]):
       cur = new_token(TK_RESERVED, cur, $p[now_reading])
       now_reading += 1
       continue

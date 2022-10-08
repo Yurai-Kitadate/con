@@ -13,7 +13,5 @@ assert() {
         exit 1
     fi
 }
-assert 3 'int fib(int n){if (n == 0){return 1;} if (n == 1){return 1;} return fib(n - 1) + fib(n - 2);} int main(){return fib(3);}'
-assert 8 'int fib(int n){if (n == 0){return 1;} if (n == 1){return 1;} return fib(n - 1) + fib(n - 2);} int main(){return fib(5);}'
-#assert 10 'int main(){return a;}'
+assert 25 'defun seki(a : int,b : int){return a*b;} defun main(){if (1 == 1){def a : int = 0;a = 5;return seki(a,a);}}'
 echo OK
