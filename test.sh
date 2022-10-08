@@ -13,7 +13,7 @@ assert() {
         exit 1
     fi
 }
-
-assert 18 'int add(int a,int b){return a + b;} int seki(int a,int b){return a*b;} int main(){return add(1,2)*seki(2,3);}'
+assert 3 'int fib(int n){if (n == 0){return 1;} if (n == 1){return 1;} return fib(n - 1) + fib(n - 2);} int main(){return fib(3);}'
+assert 8 'int fib(int n){if (n == 0){return 1;} if (n == 1){return 1;} return fib(n - 1) + fib(n - 2);} int main(){return fib(5);}'
 #assert 10 'int main(){return a;}'
 echo OK
