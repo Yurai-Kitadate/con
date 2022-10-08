@@ -5,7 +5,11 @@ import sequtils
 import strutils
 import strformat
 
-token = tokenize(input)
+token = tokenize(p)
+# var t = token
+# while t != nil:
+#   echo t.str, "  ", t.kind
+#   t = t.next
 program()
 
 printf(".intel_syntax noprefix\n")

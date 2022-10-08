@@ -13,6 +13,7 @@ assert() {
         exit 1
     fi
 }
-assert 6 'main(){a = 2;b = 3;return a*b;}'
-assert 22 'main(){a = 2;if(a == 2){a = a +  20;}return a;}'
+
+assert 18 'int add(int a,int b){return a + b;} int seki(int a,int b){return a*b;} int main(){return add(1,2)*seki(2,3);}'
+#assert 10 'int main(){return a;}'
 echo OK

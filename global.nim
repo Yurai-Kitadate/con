@@ -7,6 +7,7 @@ type TokenKind* = enum
   TK_IF
   TK_ELSE
   TK_FOR
+  TK_TYPE
 
 type Token* = object
   kind*: TokenKind
@@ -14,6 +15,7 @@ type Token* = object
   val*: int
   str*: string
   len*: int
+  pos*: int
 
 type NodeKind* = enum
   ND_ADD
@@ -56,7 +58,7 @@ proc printf*(frmt: cstring): cint {.importc: "printf", header: "<stdio.h>",
 var token* = Token.new
 var local_variables*: array[0..100, ref LVar]
 var local* = LVar.new
-let input* = stdin.readLine
+let p* = stdin.readLine
 var code*: array[0..100, ref Node]
 var now_reading* = 0
 var now_reading_token* = 0

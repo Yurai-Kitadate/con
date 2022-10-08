@@ -8,12 +8,13 @@ proc new_token(kind: TokenKind, cur: var ref Token, str: string): ref Token =
   tok[].str = str
   tok[].len = str.len
   cur[].next = tok
+  cur[].pos = now_reading
   return tok
 
 proc isspace(c: char): bool =
   return c == ' '
 
-proc strtol(p: string): int =
+proc strtol(): int =
   var res = ""
   while now_reading < p.len and '0' <= p[now_reading] and p[now_reading] <= '9':
     res &= p[now_reading]
@@ -22,7 +23,7 @@ proc strtol(p: string): int =
       return res.parseInt
   return res.parseInt
 
-proc startWith(op: string, p: string): bool =
+proc startWith(op: string): bool =
   var res = ""
   var now = now_reading
   while now < p.len and res.len < op.len:
@@ -40,7 +41,7 @@ proc is_alnum(c: char): bool =
       c <= '9') or (c == '_')
 
 proc startReserved(op: string, p: string): bool =
-  return startWith(op, p) and now_reading + len(op) + 1 < p.len and (
+  return startWith(op) and now_reading + len(op) + 1 < p.len and (
       not is_alnum(p[now_reading + len(op)]))
 proc tokenize*(p: string): ref Token =
   var head = Token.new
@@ -49,6 +50,11 @@ proc tokenize*(p: string): ref Token =
   while now_reading < p.len:
     if isspace(p[now_reading]):
       now_reading += 1
+      continue
+    if startReserved("int", p):
+      cur = new_token(TK_TYPE, cur, "int")
+      cur[].len = 3
+      now_reading += 3
       continue
     if startReserved("for", p):
       cur = new_token(TK_FOR, cur, "for")
@@ -78,8 +84,8 @@ proc tokenize*(p: string): ref Token =
       cur = new_token(TK_IDENT, cur, abc)
       cur[].len = abc.len
       continue
-    if startWith("==", p) or startWith("<=", p) or startWith(">=", p) or
-        startWith("!=", p):
+    if startWith("==") or startWith("<=") or startWith(">=") or
+        startWith("!="):
       cur = new_token(TK_RESERVED, cur, p[now_reading] & p[now_reading + 1])
       now_reading += 2
       continue
@@ -89,7 +95,13 @@ proc tokenize*(p: string): ref Token =
       continue
     if isdigit(p[now_reading]):
       cur = new_token(TK_NUM, cur, $p[now_reading])
-      cur[].val = strtol(p)
+      cur[].val = strtol()
       continue
-    raiseAssert("cannot tokenize")
+    var e = "\n\n"
+    e &= p & "\n"
+    var arrow = ""
+    for i in 0..now_reading - 1:
+      arrow &= " "
+    arrow &= "^" & "\n" & "cannot tokenize: " & p[now_reading] & "\n\n"
+    raiseAssert(e & arrow)
   return head[].next
